@@ -1,18 +1,74 @@
+import { useState, useEffect } from 'react';
 import { 
   Users, 
   CheckSquare, 
   Activity, 
   Cpu,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  RefreshCw
 } from 'lucide-react';
 import { StatsCard, AlertBanner } from '../components/StatsCard.jsx';
 import { AgentCard } from '../components/AgentCard.jsx';
 import { OrganizationTree } from '../components/OrganizationTree.jsx';
 
-export function Dashboard({ data }) {
-  if (!data?.registry) {
+const API_BASE = 'http://localhost:3001';
+
+export function Dashboard() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [lastUpdate, setLastUpdate] = useState(null);
+
+  // Fetch dashboard data
+  const fetchData = async () => {
+    try {
+      const [registryRes, tasksRes, alertsRes] = await Promise.all([
+        fetch(`${API_BASE}/api/agents`),
+        fetch(`${API_BASE}/api/tasks`),
+        fetch(`${API_BASE}/api/alerts`)
+      ]);
+
+      const [registry, tasks, alerts] = await Promise.all([
+        registryRes.json(),
+        tasksRes.json(),
+        alertsRes.json()
+      ]);
+
+      setData({ registry, tasks, alerts });
+      setLastUpdate(new Date());
+      setError(null);
+    } catch (err) {
+      console.error('Dashboard fetch error:', err);
+      setError('Failed to fetch dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial load and polling
+  useEffect(() => {
+    fetchData(); // Initial load
+    
+    // Poll every 5 seconds
+    const interval = setInterval(fetchData, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) {
     return <div className="loading">Loading dashboard data...</div>;
+  }
+
+  if (error || !data?.registry) {
+    return (
+      <div className="error-state">
+        <p>{error || 'Failed to load dashboard'}</p>
+        <button onClick={fetchData} className="btn-primary">
+          <RefreshCw size={16} /> Retry
+        </button>
+      </div>
+    );
   }
 
   const { registry, tasks, alerts } = data;
@@ -52,7 +108,15 @@ export function Dashboard({ data }) {
 
   return (
     <div className="dashboard-page">
-      <AlertBanner alerts={alerts} />
+      <div className="dashboard-header">
+        <AlertBanner alerts={alerts} />
+        {lastUpdate && (
+          <div className="last-update">
+            <RefreshCw size={12} className="update-icon" />
+            Updated: {lastUpdate.toLocaleTimeString()}
+          </div>
+        )}
+      </div>
       
       {/* Stats Row */}
       <div className="stats-grid">
