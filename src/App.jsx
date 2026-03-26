@@ -11,6 +11,7 @@ import { A2AViewer } from './pages/A2AViewer.jsx';
 import { InboxPage } from './pages/InboxPage.jsx';
 import { Inbox } from './pages/Inbox.jsx';
 import './App.css';
+import './mobile-inbox.css';
 
 function App() {
   // Read initial tab from URL hash

@@ -1,0 +1,179 @@
+/* ========================================
+   MOBILE INBOX IMPROVEMENTS
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Inbox becomes full-screen stack */
+  .inbox-page {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 120px);
+    border: none;
+    border-radius: 0;
+  }
+  
+  .inbox-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .inbox-thread {
+    height: auto;
+    min-height: 400px;
+  }
+  
+  /* Conversation list items - larger touch targets */
+  .conversation-item {
+    padding: 16px;
+    min-height: 72px;
+  }
+  
+  .conversation-avatars {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .conversation-avatars .avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+  
+  .conversation-content {
+    gap: 6px;
+  }
+  
+  .conversation-title {
+    font-size: 15px;
+  }
+  
+  .conversation-preview {
+    font-size: 13px;
+    -webkit-line-clamp: 2;
+  }
+  
+  /* Thread messages - full width */
+  .message-content {
+    max-width: 90%;
+  }
+  
+  .message-bubble {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+  
+  /* Reply input - fixed at bottom */
+  .thread-reply {
+    padding: 12px;
+    position: sticky;
+    bottom: 0;
+  }
+  
+  .thread-reply input {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+  
+  /* Header filters stack */
+  .inbox-filters {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+  
+  .inbox-search {
+    width: 100%;
+    order: 2;
+  }
+  
+  .inbox-search input {
+    font-size: 16px;
+    padding: 12px 16px;
+  }
+  
+  .agent-filter {
+    width: 100%;
+    order: 1;
+  }
+  
+  .agent-filter select {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+  
+  /* Thread header */
+  .thread-header {
+    padding: 12px 16px;
+  }
+  
+  .thread-participants {
+    font-size: 15px;
+  }
+  
+  /* Empty state */
+  .thread-empty {
+    padding: 40px 20px;
+  }
+  
+  .thread-empty h3 {
+    font-size: 18px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .inbox-sidebar {
+    max-height: 50vh;
+  }
+  
+  .conversation-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .conversation-time {
+    font-size: 11px;
+  }
+  
+  .unread-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+  
+  .message-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .message-meta {
+    flex-wrap: wrap;
+  }
+}
+
+/* Landscape mode on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .inbox-page {
+    flex-direction: row;
+    height: calc(100vh - 100px);
+  }
+  
+  .inbox-sidebar {
+    width: 280px;
+    height: 100%;
+    max-height: none;
+    border-right: 1px solid var(--border-color);
+    border-bottom: none;
+  }
+  
+  .inbox-thread {
+    height: 100%;
+    min-height: auto;
+  }
+}
