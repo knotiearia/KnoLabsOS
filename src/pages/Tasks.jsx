@@ -12,6 +12,7 @@ import {
   CheckSquare,
   X
 } from 'lucide-react';
+import { getAgentsList } from '../config/agents.config';
 import { KanbanBoard } from '../components/TaskCard.jsx';
 
 const PRIORITY_CONFIG = {
@@ -334,11 +335,9 @@ export function Tasks({ data, onRefresh }) {
             className="filter-select"
           >
             <option value="">All Agents</option>
-            <option value="pixel">PIXEL</option>
-            <option value="curio">CURIO</option>
-            <option value="scribe">SCRIBE</option>
-            <option value="flux">FLUX</option>
-            <option value="vault">VAULT</option>
+            {getAgentsList().map(agent => (
+              <option key={agent.id} value={agent.id}>{agent.name}</option>
+            ))}
           </select>
           
           <select 
@@ -463,11 +462,9 @@ export function Tasks({ data, onRefresh }) {
                   onChange={(e) => handleFormChange('agent', e.target.value)}
                 >
                   <option value="">Select an agent...</option>
-                  <option value="pixel">👨‍💻 PIXEL (Engineering)</option>
-                  <option value="curio">🔍 CURIO (Research)</option>
-                  <option value="scribe">✍️ SCRIBE (Content)</option>
-                  <option value="flux">⚡ FLUX (DevOps)</option>
-                  <option value="vault">🛡️ VAULT (Security)</option>
+                  {getAgentsList().map(agent => (
+                    <option key={agent.id} value={agent.id}>{agent.emoji} {agent.name} ({agent.role})</option>
+                  ))}
                 </select>
                 {formErrors.agent && <span className="error-text">{formErrors.agent}</span>}
               </div>

@@ -13,73 +13,77 @@ import {
   Share2
 } from 'lucide-react';
 
-// Agent configuration for avatars and colors
-const AGENT_CONFIG = {
-  aria: { emoji: '🎪', color: '#9333ea', name: 'ARIA' },
-  pixel: { emoji: '👨‍💻', color: '#3b82f6', name: 'PIXEL' },
-  curio: { emoji: '🔍', color: '#6366f1', name: 'CURIO' },
-  scribe: { emoji: '✍️', color: '#10b981', name: 'SCRIBE' },
-  flux: { emoji: '⚡', color: '#f59e0b', name: 'FLUX' },
-  vault: { emoji: '🛡️', color: '#ef4444', name: 'VAULT' },
-  system: { emoji: '🔧', color: '#6b7280', name: 'SYSTEM' }
-};
+import { AGENTS_OBJ, getAgentConfig } from '../config/agents.config';
 
-// Generate mock conversation data
+// Create AGENT_CONFIG for backward compatibility
+const AGENT_CONFIG = Object.fromEntries(
+  Object.values(AGENTS_OBJ).map(agent => [agent.id, agent])
+);
+
+// Generate mock conversation data using agent config
 function generateMockConversations() {
-  const agents = Object.keys(AGENT_CONFIG).filter(a => a !== 'system');
+  const agents = Object.values(AGENTS_OBJ).filter(a => a.id !== 'system');
   const conversations = [];
   const now = Date.now();
+  
+  // Get agent references dynamically
+  const orchestrator = agents.find(a => a.role.includes('Orchestrator')) || agents[0];
+  const engineer = agents.find(a => a.role.includes('Engineer')) || agents[1];
+  const researcher = agents.find(a => a.role.includes('Research')) || agents[2];
+  const content = agents.find(a => a.role.includes('Content')) || agents[3];
+  const devops = agents.find(a => a.role.includes('DevOps')) || agents[4];
+  const security = agents.find(a => a.role.includes('Security')) || agents[5];
   
   // Create several conversation threads
   const threads = [
     {
       id: 'thread-1',
       title: 'Frontend Dashboard Implementation',
-      participants: ['aria', 'pixel'],
+      participants: [orchestrator.id, engineer.id],
       messages: [
-        { id: 1, agent: 'aria', content: 'PIXEL, I need you to implement the Organization Tree component for the dashboard. It should show agent hierarchy with expandable nodes.', timestamp: now - 3600000 },
-        { id: 2, agent: 'pixel', content: 'Got it! I\'ll create a tree visualization with ARIA at the root and all other agents as children. Each node will expand to show tools, capabilities, and metrics.', timestamp: now - 3500000 },
-        { id: 3, agent: 'aria', content: 'Perfect. Make sure to include smooth animations and the color coding we discussed.', timestamp: now - 3400000 },
-        { id: 4, agent: 'pixel', content: 'Component created! It has expand/collapse animations, hover effects, and shows all agent details including tools from the registry.', timestamp: now - 3300000 },
-        { id: 5, agent: 'aria', content: 'Excellent work. The build passed successfully.', timestamp: now - 3200000 }
+        { id: 1, agent: orchestrator.id, content: `${engineer.name}, I need you to implement the Organization Tree component for the dashboard. It should show agent hierarchy with expandable nodes.`, timestamp: now - 3600000 },
+        { id: 2, agent: engineer.id, content: `Got it! I'll create a tree visualization with ${orchestrator.name} at the root and all other agents as children. Each node will expand to show tools, capabilities, and metrics.`, timestamp: now - 3500000 },
+        { id: 3, agent: orchestrator.id, content: 'Perfect. Make sure to include smooth animations and the color coding we discussed.', timestamp: now - 3400000 },
+        { id: 4, agent: engineer.id, content: 'Component created! It has expand/collapse animations, hover effects, and shows all agent details including tools from the registry.', timestamp: now - 3300000 },
+        { id: 5, agent: orchestrator.id, content: 'Excellent work. The build passed successfully.', timestamp: now - 3200000 }
       ]
     },
     {
       id: 'thread-2',
       title: 'Security Audit Planning',
-      participants: ['aria', 'vault', 'pixel'],
+      participants: [orchestrator.id, security.id, engineer.id],
       messages: [
-        { id: 6, agent: 'vault', content: 'ARIA, I\'ve completed the initial security assessment. We need to review SSH configurations and firewall rules.', timestamp: now - 7200000 },
-        { id: 7, agent: 'aria', content: 'Good catch. Can you coordinate with PIXEL to ensure the deployment scripts follow security best practices?', timestamp: now - 7100000 },
-        { id: 8, agent: 'pixel', content: 'I\'m updating the deployment automation to include security hardening steps. VAULT, can you review the changes?', timestamp: now - 7000000 },
-        { id: 9, agent: 'vault', content: 'Reviewing now. I\'ll add compliance checks to the CI pipeline as well.', timestamp: now - 6900000 },
-        { id: 10, agent: 'aria', content: 'Schedule a follow-up review for next week.', timestamp: now - 6800000 }
+        { id: 6, agent: security.id, content: `${orchestrator.name}, I've completed the initial security assessment. We need to review SSH configurations and firewall rules.`, timestamp: now - 7200000 },
+        { id: 7, agent: orchestrator.id, content: `Good catch. Can you coordinate with ${engineer.name} to ensure the deployment scripts follow security best practices?`, timestamp: now - 7100000 },
+        { id: 8, agent: engineer.id, content: `I'm updating the deployment automation to include security hardening steps. ${security.name}, can you review the changes?`, timestamp: now - 7000000 },
+        { id: 9, agent: security.id, content: `Reviewing now. I'll add compliance checks to the CI pipeline as well.`, timestamp: now - 6900000 },
+        { id: 10, agent: orchestrator.id, content: 'Schedule a follow-up review for next week.', timestamp: now - 6800000 }
       ]
     },
     {
       id: 'thread-3',
       title: 'Research Task: AI Trends',
-      participants: ['aria', 'curio', 'scribe'],
+      participants: [orchestrator.id, researcher.id, content.id],
       messages: [
-        { id: 11, agent: 'aria', content: 'CURIO, we need a research report on current AI trends for the quarterly review.', timestamp: now - 86400000 },
-        { id: 12, agent: 'curio', content: 'I\'ll gather the latest information on LLM developments, multi-agent systems, and industry adoption.', timestamp: now - 86000000 },
-        { id: 13, agent: 'scribe', content: 'I can help format the findings into a professional report. CURIO, share your sources and I\'ll create the document.', timestamp: now - 85000000 },
-        { id: 14, agent: 'curio', content: 'Sources compiled. Key trends: 1) Multi-agent orchestration 2) Tool-augmented LLMs 3) Local deployment optimization', timestamp: now - 84000000 },
-        { id: 15, agent: 'scribe', content: 'Report drafted and saved to the shared workspace. Ready for review.', timestamp: now - 83000000 },
-        { id: 16, agent: 'aria', content: 'Reviewed and approved. Excellent collaboration.', timestamp: now - 82000000 }
+        { id: 11, agent: orchestrator.id, content: `${researcher.name}, we need a research report on current AI trends for the quarterly review.`, timestamp: now - 86400000 },
+        { id: 12, agent: researcher.id, content: "I'll gather the latest information on LLM developments, multi-agent systems, and industry adoption.", timestamp: now - 86000000 },
+        { id: 13, agent: content.id, content: `I can help format the findings into a professional report. ${researcher.name}, share your sources and I'll create the document.`, timestamp: now - 85000000 },
+        { id: 14, agent: researcher.id, content: 'Sources compiled. Key trends: 1) Multi-agent orchestration 2) Tool-augmented LLMs 3) Local deployment optimization', timestamp: now - 84000000 },
+        { id: 15, agent: content.id, content: 'Report drafted and saved to the shared workspace. Ready for review.', timestamp: now - 83000000 },
+        { id: 16, agent: orchestrator.id, content: 'Reviewed and approved. Excellent collaboration.', timestamp: now - 82000000 }
       ]
     },
     {
       id: 'thread-4',
       title: 'Infrastructure Scaling',
-      participants: ['flux', 'aria', 'pixel'],
+      participants: [devops.id, orchestrator.id, engineer.id],
       messages: [
-        { id: 17, agent: 'flux', content: 'We need to scale the ACC infrastructure. Current load is approaching 80% capacity.', timestamp: now - 172800000 },
-        { id: 18, agent: 'aria', content: 'What are our options? Can we optimize before scaling hardware?', timestamp: now - 172600000 },
-        { id: 19, agent: 'flux', content: 'I\'ve identified several optimization opportunities. PIXEL, can you help with the database query optimization?', timestamp: now - 172400000 },
-        { id: 20, agent: 'pixel', content: 'On it. I see some N+1 queries in the task queue that we can batch.', timestamp: now - 172200000 },
-        { id: 21, agent: 'flux', content: 'Optimizations deployed. Load reduced to 45%. We can delay hardware scaling for now.', timestamp: now - 171000000 },
-        { id: 22, agent: 'aria', content: 'Great teamwork. Monitor the metrics and alert if we hit 70% again.', timestamp: now - 170800000 }
+        { id: 17, agent: devops.id, content: 'We need to scale the infrastructure. Current load is approaching 80% capacity.', timestamp: now - 172800000 },
+        { id: 18, agent: orchestrator.id, content: 'What are our options? Can we optimize before scaling hardware?', timestamp: now - 172600000 },
+        { id: 19, agent: devops.id, content: `I've identified several optimization opportunities. ${engineer.name}, can you help with the database query optimization?`, timestamp: now - 172400000 },
+        { id: 20, agent: engineer.id, content: 'On it. I see some N+1 queries in the task queue that we can batch.', timestamp: now - 172200000 },
+        { id: 21, agent: devops.id, content: 'Optimizations deployed. Load reduced to 45%. We can delay hardware scaling for now.', timestamp: now - 171000000 },
+        { id: 22, agent: orchestrator.id, content: 'Great teamwork. Monitor the metrics and alert if we hit 70% again.', timestamp: now - 170800000 }
       ]
     }
   ];
@@ -343,7 +347,7 @@ export function A2AViewer() {
               <div className="agent-filters">
                 <span className="filter-label">Filter by agent:</span>
                 <div className="filter-chips">
-                  {Object.entries(AGENT_CONFIG)
+                  {Object.entries(AGENTS_OBJ)
                     .filter(([id]) => id !== 'system')
                     .map(([id, config]) => (
                       <button
@@ -395,7 +399,7 @@ export function A2AViewer() {
                   <h2>{activeThread.title}</h2>
                   <div className="thread-view-participants">
                     <Users size={14} />
-                    {activeThread.participants.map(p => AGENT_CONFIG[p]?.name || p).join(', ')}
+                    {activeThread.participants.map(p => AGENTS[p]?.name || p).join(', ')}
                   </div>
                 </div>
                 <button className="btn btn-secondary" onClick={exportConversation}>

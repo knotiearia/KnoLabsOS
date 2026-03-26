@@ -22,15 +22,7 @@ import {
   MoreVertical
 } from 'lucide-react';
 
-// Agent configuration
-const AGENTS = [
-  { id: 'aria', name: 'ARIA', emoji: '🎪', color: '#9333ea', role: 'Chief Orchestrator' },
-  { id: 'pixel', name: 'PIXEL', emoji: '👨‍💻', color: '#3b82f6', role: 'Lead Engineer' },
-  { id: 'curio', name: 'CURIO', emoji: '🔍', color: '#6366f1', role: 'Research Lead' },
-  { id: 'scribe', name: 'SCRIBE', emoji: '✍️', color: '#10b981', role: 'Content Lead' },
-  { id: 'flux', name: 'FLUX', emoji: '⚡', color: '#f59e0b', role: 'DevOps Lead' },
-  { id: 'vault', name: 'VAULT', emoji: '🛡️', color: '#ef4444', role: 'Security Auditor' }
-];
+import { AGENTS, getAgentsList } from '../config/agents.config';
 
 const TASK_TYPES = [
   { id: 'feature', label: 'Feature', icon: Sparkles, color: '#3b82f6' },
