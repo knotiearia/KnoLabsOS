@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useACCData } from './hooks/useACCData.js';
 import { Menu } from 'lucide-react';
 import { Sidebar } from './components/Layout/Sidebar.jsx';
@@ -13,14 +13,37 @@ import { Inbox } from './pages/Inbox.jsx';
 import './App.css';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  // Read initial tab from URL hash
+  const getTabFromHash = () => {
+    const hash = window.location.hash.replace('#', '');
+    const validTabs = ['dashboard', 'inbox', 'tasks', 'agents', 'system', 'system-monitor', 'a2a'];
+    return validTabs.includes(hash) ? hash : 'dashboard';
+  };
+
+  const [activeTab, setActiveTab] = useState(getTabFromHash);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const { data, loading, error, lastRefresh, refresh } = useACCData();
 
+  // Sync URL hash with state
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const validTabs = ['dashboard', 'inbox', 'tasks', 'agents', 'system', 'system-monitor', 'a2a'];
+      if (validTabs.includes(hash)) {
+        setActiveTab(hash);
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Update hash when tab changes
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+    window.location.hash = tab;
     setMobileMenuOpen(false);
   };
 
